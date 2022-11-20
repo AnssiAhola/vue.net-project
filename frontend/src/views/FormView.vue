@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import MyFrom from '@/components/MyFrom.vue';
+import ReviewForm from '@/components/ReviewForm.vue';
 
 </script>
 
 <template>
   <main>
     <section class="my-form">
-      <MyFrom />
+      <ReviewForm />
     </section>
   </main>
 </template>

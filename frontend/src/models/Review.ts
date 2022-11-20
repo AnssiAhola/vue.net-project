@@ -1,6 +1,6 @@
-interface Review {
-    name: string,
-    email: string,
-    content: string,
+export interface Review {
+    name: string
+    email: string
+    content: string
     timestamp: Date
 }

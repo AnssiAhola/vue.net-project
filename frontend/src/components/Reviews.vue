@@ -1,50 +1,24 @@
 <script setup lang="ts">
 
-function formatDate(date: Date) {
+import type { Review } from '@/models/Review';
+import { ReviewService } from '@/services/ReviewService';
+import { onMounted, ref } from 'vue';
+
+let reviewService = new ReviewService
+
+let reviews = ref<Review[]>([])
+
+function formatDate(date: Date|string) {
+    if (typeof date == "string") {
+        date = new Date(date)
+    }
     return date.toLocaleDateString()
 }
 
+onMounted(() => {
+    reviews.value = reviewService.fetch(9)
+})
 
-const reviews: Review[] = [
-    {
-        name: "Matti Meikäläinen",
-        email: "mattimeikalainen@gmail.com",
-        content: "Vitae quod repudiandae eligendi sequi recusandae dolores.",
-        timestamp: new Date()
-    },
-    {
-        name: "Maija Mallikas",
-        email: "maija.m@outlook.com",
-        content: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-        timestamp: new Date()
-    },
-    {
-        name: "Anssi Ahola",
-        email: "anssia.ahola@gmail.com",
-        content: `
-        Porro, iste minima adipisci et fugit facere mollitia ut alias
-        Porro, iste minima adipisci et fugit facere mollitia ut alias
-        Porro, iste minima adipisci et fugit facere mollitia ut alias
-        Porro, iste minima adipisci et fugit facere mollitia ut alias
-        Porro, iste minima adipisci et fugit facere mollitia ut alias
-        `,
-        timestamp: new Date()
-    },
-    {
-        name: "Jane Doe",
-        email: "jane.doe@missing.com",
-        content:
-            `
-        Veniam laborum iusto, velit consequuntur?
-        Veniam laborum iusto, velit consequuntur?
-        Veniam laborum iusto, velit consequuntur?
-        Veniam laborum iusto, velit consequuntur?
-        Veniam laborum iusto, velit consequuntur?
-        Veniam laborum iusto, velit consequuntur?
-        `,
-        timestamp: new Date("2022-01-01 00:12:00")
-    }
-]
 </script>
 
 <template>

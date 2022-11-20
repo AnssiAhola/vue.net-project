@@ -1,19 +1,51 @@
 <script setup lang="ts">
+import { ReviewService } from '@/services/ReviewService';
+import type { Review } from "@/models/Review";
+import { onMounted, ref } from 'vue';
+
+let reviewService = new ReviewService()
+
+let name = ref("")
+let email = ref("")
+let content = ref("")
+
+let submit = (e: Event) => {
+    let _content = content.value.trim()
+    let _name = name.value.trim()
+    if (_name.length == 0 || _content.length == 0) {
+        return
+    }
+    let review:Review = {
+        name: _name,
+        email: email.value.trim(),
+        content: _content,
+        timestamp: new Date()
+    }
+    reviewService.submit(review)
+    reset()
+    e.preventDefault()
+}
+
+let reset = () => {
+    name.value = ""
+    email.value = ""
+    content.value = ""
+}
 </script>
 
 <template>
-    <form action="" class="my-form">
+    <form @submit="submit" class="my-form">
         <div class="input-container">
             <label for="name">Nimi</label>
-            <input class="shadow" type="text" name="name" id="">
+            <input v-model="name" class="shadow" type="text" name="name" id="">
         </div>
         <div class="input-container">
             <label for="email">Sähköpostiosoite</label>
-            <input class="shadow" type="email" name="email" id="">
+            <input v-model="email" class="shadow" type="email" name="email" id="">
         </div>
         <div class="input-container">
-            <label for="address">Vapaa kenttä</label>
-            <textarea class="shadow" type="textarea" name="address" id=""></textarea>
+            <label for="content">Vapaa kenttä</label>
+            <textarea v-model="content" class="shadow" type="textarea" name="review_content" id=""></textarea>
         </div>
         <button type="submit" class="submit-btn shadow">
             Lähetä
@@ -40,7 +72,8 @@
     margin-bottom: .5rem;
 }
 
-input, textarea {
+input,
+textarea {
     width: 100%;
     width: -webkit-fill-available;
     background-color: rgb(247, 247, 247);
