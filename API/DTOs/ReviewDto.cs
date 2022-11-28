@@ -1,0 +1,9 @@
+﻿namespace API.DTOs
+{
+    public class ReviewDto
+    {
+        public string ReviewerName { get; set; } = "";
+
+        public string Content { get; set; } = "";
+    }
+}
