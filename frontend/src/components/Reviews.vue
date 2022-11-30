@@ -43,7 +43,7 @@ onMounted(() => loadMore())
                 </div>
             </div>
         </div>
-        <button @click="loadMore" class="load-more">
+        <button @click="loadMore" class="load-more shadow">
             Lataa lisää
         </button>
     </div>
