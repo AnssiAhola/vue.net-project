@@ -64,17 +64,21 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<ReviewDto>> PostReview(CreateReviewDto createReview)
         {
+            var sanitizedName = _sanitizer.Sanitize(createReview.ReviewerName);
+            var sanitizedEmail = _sanitizer.Sanitize(createReview.ReviewerEmail);
             var sanitizedContent = _sanitizer.Sanitize(createReview.Content);
 
-            if (sanitizedContent.Trim().Length == 0)
+            if (sanitizedName.Trim().Length == 0 ||
+                sanitizedEmail.Trim().Length == 0 ||
+                sanitizedContent.Trim().Length == 0)
             {
                 return BadRequest();
             }
 
             var review = new Review
             {
-                ReviewerName = createReview.ReviewerName,
-                ReviewerEmail = createReview.ReviewerEmail,
+                ReviewerName = sanitizedName,
+                ReviewerEmail = sanitizedEmail,
                 Content = sanitizedContent,
                 CreatedAt = DateTime.UtcNow,
             };
