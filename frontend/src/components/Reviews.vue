@@ -8,16 +8,19 @@ let reviewService = new ReviewService
 
 let reviews = ref<Review[]>([])
 
-function formatDate(date: Date|string) {
+function formatDate(date: Date | string) {
     if (typeof date == "string") {
         date = new Date(date)
     }
     return date.toLocaleDateString()
 }
 
-onMounted(() => {
-    reviews.value = reviewService.fetch(9)
-})
+function loadMore() {
+    reviewService.fetch(9, reviews.value.length)
+        .then(_reviews => reviews.value = reviews.value.concat(_reviews))
+}
+
+onMounted(() => loadMore())
 
 </script>
 
@@ -26,11 +29,12 @@ onMounted(() => {
         <div class="title">
             <h4>Arviot</h4>
         </div>
-        <div class="reviews">
+        <div class="no-reviews" v-if="reviews.length == 0">Ei arvioita</div>
+        <div class="reviews" v-if="reviews">
             <div class="card shadow" v-for="review in reviews">
                 <div class="header">
-                    <span class="reviewer">{{ review.name }}</span>
-                    <span class="timestamp">{{ formatDate(review.timestamp) }}</span>
+                    <span class="reviewer">{{ review.reviewerName }}</span>
+                    <span class="timestamp">{{ formatDate(review.createdAt) }}</span>
                 </div>
                 <div class="content">
                     <i>
@@ -39,6 +43,9 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+        <button @click="loadMore" class="load-more">
+            Lataa lisää
+        </button>
     </div>
 </template>
 
@@ -62,6 +69,11 @@ onMounted(() => {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.no-reviews {
+    margin: 2rem;
+    font-size: larger;
 }
 
 .card {
@@ -98,5 +110,14 @@ onMounted(() => {
 .timestamp {
     font-style: italic;
     font-size: small;
+}
+
+.load-more {
+    margin: 1rem;
+    padding: .5rem 1rem;
+    border: none;
+    border-radius: 1rem;
+    background-color: rgb(155, 191, 56);
+    font-weight: bold;
 }
 </style>

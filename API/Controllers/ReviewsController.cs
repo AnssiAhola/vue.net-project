@@ -4,6 +4,7 @@ using API.Data;
 using API.Entities;
 using API.DTOs;
 using AutoMapper;
+using Ganss.Xss;
 
 namespace API.Controllers
 {
@@ -14,22 +15,34 @@ namespace API.Controllers
         private readonly DataContext _context;
 
         private readonly IMapper _mapper;
+        private readonly HtmlSanitizer _sanitizer;
 
-        public ReviewsController(DataContext context, IMapper mapper)
+        public ReviewsController(
+            DataContext context,
+            IMapper mapper,
+            HtmlSanitizer sanitizer
+        )
         {
             _context = context;
             _mapper = mapper;
+            _sanitizer = sanitizer;
         }
 
         // GET: api/reviews
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviews()
+        public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviews(int limit = 9, int offset = 0)
         {
-            var allReviews = await _context.Reviews.ToListAsync();
+            var allReviews = await _context.Reviews
+                .OrderByDescending(review => review.CreatedAt)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+
             if (allReviews == null)
             {
                 return Ok();
             }
+
             return _mapper.Map<List<ReviewDto>>(allReviews);
         }
 
@@ -48,20 +61,31 @@ namespace API.Controllers
         }
 
         // POST: api/reviews
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Review>> PostReview(CreateReviewDto createReview)
+        public async Task<ActionResult<ReviewDto>> PostReview(CreateReviewDto createReview)
         {
+            var sanitizedContent = _sanitizer.Sanitize(createReview.Content);
+
+            if (sanitizedContent.Trim().Length == 0)
+            {
+                return BadRequest();
+            }
+
             var review = new Review
             {
                 ReviewerName = createReview.ReviewerName,
                 ReviewerEmail = createReview.ReviewerEmail,
-                Content = createReview.Content,
+                Content = sanitizedContent,
+                CreatedAt = DateTime.UtcNow,
             };
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
 
-            return Ok(review);
+            return CreatedAtAction(
+                nameof(PostReview),
+                new { id = review.Id },
+                 _mapper.Map<ReviewDto>(review)
+            );
         }
     }
 }

@@ -1,6 +1,7 @@
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,7 +20,10 @@ services.AddAutoMapper(mapper =>
     mapper.CreateMap<Review, ReviewDto>().ReverseMap();
 });
 
+services.AddScoped<HtmlSanitizer>();
+
 services.AddControllers();
+services.AddCors();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
@@ -27,6 +31,7 @@ services.Configure<RouteOptions>(options =>
 {
     options.LowercaseUrls = true;
 });
+
 
 
 var app = builder.Build();
@@ -39,6 +44,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(policy => policy
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .WithOrigins("http://localhost:5173")
+);
 
 app.UseAuthorization();
 

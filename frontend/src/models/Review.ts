@@ -1,6 +1,6 @@
 export interface Review {
-    name: string
-    email: string
+    reviewerName: string
+    reviewerEmail: string
     content: string
-    timestamp: Date
+    createdAt: Date
 }

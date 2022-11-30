@@ -5,14 +5,25 @@ import ReviewForm from '@/components/ReviewForm.vue';
 
 <template>
   <main>
-    <section class="my-form">
-      <ReviewForm />
-    </section>
+    <h2 class="title">Jätä arviosi!</h2>
+    <ReviewForm class="my-form" />
   </main>
 </template>
 
-<style>
-.my-form {
+<style scoped>
+main {
+  margin: auto;
   max-width: 500px;
+}
+
+.title {
+  text-align: center;
+  margin: auto;
+  margin-top: 2rem;
+}
+
+.my-form {
+  margin: auto;
+  margin-top: 3rem;
 }
 </style>

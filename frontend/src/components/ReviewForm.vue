@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ReviewService } from '@/services/ReviewService';
-import type { Review } from "@/models/Review";
 import { onMounted, ref } from 'vue';
 
 let reviewService = new ReviewService()
@@ -9,21 +8,22 @@ let name = ref("")
 let email = ref("")
 let content = ref("")
 
+let submitSuccessful = ref(false)
+
 let submit = (e: Event) => {
+    e.preventDefault()
+    submitSuccessful.value = false
+
     let _content = content.value.trim()
     let _name = name.value.trim()
     if (_name.length == 0 || _content.length == 0) {
         return
     }
-    let review:Review = {
-        name: _name,
-        email: email.value.trim(),
-        content: _content,
-        timestamp: new Date()
-    }
-    reviewService.submit(review)
+    reviewService.submit(_name, email.value.trim(), _content).then(result => {
+        submitSuccessful.value = result
+        setTimeout(() => submitSuccessful.value = false, 3000)
+    })
     reset()
-    e.preventDefault()
 }
 
 let reset = () => {
@@ -37,19 +37,23 @@ let reset = () => {
     <form @submit="submit" class="my-form">
         <div class="input-container">
             <label for="name">Nimi</label>
-            <input v-model="name" class="shadow" type="text" name="name" id="">
+            <input required v-model="name" class="shadow" type="text" name="name" id="">
         </div>
         <div class="input-container">
             <label for="email">Sähköpostiosoite</label>
-            <input v-model="email" class="shadow" type="email" name="email" id="">
+            <input required v-model="email" class="shadow" type="email" name="email" id="">
         </div>
         <div class="input-container">
-            <label for="content">Vapaa kenttä</label>
-            <textarea v-model="content" class="shadow" type="textarea" name="review_content" id=""></textarea>
+            <label for="content">Vapaamuotoinen palaute</label>
+            <textarea required maxlength="500" v-model="content" class="shadow" type="textarea" name="review_content"
+                id=""></textarea>
         </div>
         <button type="submit" class="submit-btn shadow">
             Lähetä
         </button>
+        <div class="submit-success" v-if="submitSuccessful">
+            Kiitos arvioinnista!
+        </div>
     </form>
 </template>
 
@@ -96,5 +100,10 @@ textarea {
     border: none;
     border-radius: .5rem;
     margin: 1rem 2rem;
+}
+
+.submit-success {
+    color: rgb(12, 145, 12);
+    margin: auto;
 }
 </style>
