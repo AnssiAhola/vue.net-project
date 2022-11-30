@@ -6,17 +6,14 @@ export class ReviewService {
     private httpClient: AxiosInstance;
     private ENDPOINT = "/reviews";
 
-
     constructor() {
         this.httpClient = axios.create({
-            baseURL: "https://localhost:7161/api",
+            baseURL: import.meta.env.VITE_API_ROOT,
             headers: {
                 "Content-Type": "application/json",
             }
         })
     }
-
-    // TODO: Implement API calls to backend
 
     async submit(reviewerName: string, reviewerEmail: string, content: string): Promise<boolean> {
         return this.httpClient.post(this.ENDPOINT, {
