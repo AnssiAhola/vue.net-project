@@ -6,18 +6,22 @@ import { onMounted, ref } from 'vue';
 import LoadingSpinner from './LoadingSpinner.vue';
 import ReviewCard from './ReviewCard.vue';
 
+const reviewsPerLoad = 9
+
 let reviewService = new ReviewService
 
 let reviews = ref<Review[]>([])
 let loading = ref(false)
+let moreReviewsFound = ref(false)
 
 function loadMore() {
     if (reviews.value.length == 0) {
         loading.value = true
     }
-
-    reviewService.fetch(9, reviews.value.length)
+    let offset = reviews.value.length
+    reviewService.fetch(reviewsPerLoad, offset)
         .then(_reviews => {
+            moreReviewsFound.value = _reviews.length >= reviewsPerLoad
             reviews.value = reviews.value.concat(_reviews)
             loading.value = false
         }).catch(() => loading.value = false)
@@ -37,7 +41,7 @@ onMounted(() => loadMore())
         <div class="reviews" v-if="reviews">
             <ReviewCard :review="review" v-for="review in reviews" />
         </div>
-        <button @click="loadMore" v-if="!loading" class="load-more shadow">
+        <button @click="loadMore" v-if="(!loading && moreReviewsFound)" class="load-more shadow">
             Lataa lisää
         </button>
     </div>
