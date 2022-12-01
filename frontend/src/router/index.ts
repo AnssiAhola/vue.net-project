@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import IntroView from '../views/IntroView.vue'
 import FormView from '../views/FormView.vue'
 import ContactView from '../views/ContactView.vue'
 
@@ -11,11 +10,6 @@ const router = createRouter({
       path: '/',
       name: "home",
       component: HomeView
-    },
-    {
-      path: '/esittely',
-      name: "intro",
-      component: IntroView
     },
     {
       path: '/yhteystiedot',

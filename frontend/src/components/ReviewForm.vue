@@ -19,10 +19,11 @@ let submit = (e: Event) => {
     if (_name.length == 0 || _content.length == 0) {
         return
     }
-    reviewService.submit(_name, email.value.trim(), _content).then(result => {
-        submitSuccessful.value = result
-        setTimeout(() => submitSuccessful.value = false, 3000)
-    })
+    reviewService.submit(_name, email.value.trim(), _content)
+        .then(result => {
+            submitSuccessful.value = result
+            setTimeout(() => submitSuccessful.value = false, 3000)
+        })
     reset()
 }
 

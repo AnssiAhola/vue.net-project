@@ -20,7 +20,7 @@ export class ReviewService {
             reviewerName: reviewerName,
             reviewerEmail: reviewerEmail,
             content: content
-        }).then(result => result.status == 200)
+        }).then(result => result.status == 201)
     }
 
     async fetch(limit: number, offset: number): Promise<Review[]> {

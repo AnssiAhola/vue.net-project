@@ -29,7 +29,7 @@ import Reviews from "@/components/Reviews.vue"
   font-weight: 600;
   font-size: 70%;
   border-radius: 1rem;
-  background-color: rgb(155, 191, 56);
+  background-color: var(--color-secondary);
   padding: .5rem 2rem;
   margin: 1rem 0;
   width: 10rem;
